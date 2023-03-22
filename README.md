@@ -44,4 +44,6 @@ template <typename K, typename V, typename Comp = Less<K>>
 class map_on_skiplist;
 ```
 The basic idea is to wrap the `class skiplist` into this container by the way of combination, still some debugging required. (Different from the method `std::map` uses, where the base container```
-_Rb_tree<key_type, value_type, _Select1st<value_type>, key_compare, _Pair_alloc_type>``` is already using `K-V` structure, I want to struggle with template to get a different design, where the underlying `skiplist` takes `kv_node` as it's basic `typename T`, and de-pair work done in the upper level, i.e. in the `map_on_skiplist`
+_Rb_tree<key_type, value_type, _Select1st<value_type>, key_compare, _Pair_alloc_type>``` is already using `K-V` structure, I want to struggle with template to get a different design, where the underlying `skiplist` takes `kv_node` as it's basic `typename T`, and de-pair work done in the upper level, i.e. in the `map_on_skiplist`.
+
+There are still lots of template and oop things to learn
