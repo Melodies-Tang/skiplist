@@ -1,6 +1,6 @@
-# KV storage on two lines
+# KV storage through two ways
 
-## skiplist_map.hpp
+## skiplist_map.hpp: All in one
 Provide 
 ```cpp
 template <typename K, typename V, typename Comp = Less<K>> 
@@ -19,8 +19,10 @@ iterator end() const;
 iterator begin() const;
 size_t size() const;
 ```
+---------------------------
+---------------------------
 
-## skiplist.hpp
+## skiplist.hpp along with map_on_skiplist.hpp
 A more basic implementation of skiplist, gives
 ```cpp
 template <typename T, typename Comp = Less<T>>
@@ -37,7 +39,6 @@ iterator begin() const;
 size_t size() const;
 ```
 
-## map_on_skiplist.hpp
 Based on the basic skiplist, construct a map-like container
 ```cpp
 template <typename K, typename V, typename Comp = Less<K>>
