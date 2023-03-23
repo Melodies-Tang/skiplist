@@ -113,8 +113,7 @@ public:
 
         if (found != tail && found->key == key)
         {
-            // key already exists, modify and return iterator pointing to it
-            found->value = value;
+            // key already exists, no modification and return iterator pointing to it
             return iterator(found);
         }
 
@@ -130,11 +129,11 @@ public:
 
     bool erase(const K &key)
     {
-        skip_list_node *update[MAX_LEVEL]; // record the predecessor of inserted levels
+        skip_list_node *update[MAX_LEVEL]; // record the predecessor of erasing levels
         skip_list_node *found = find_update(key, update);
-        if (found->key != key)
+        if (found == tail || found->key != key)
             return false;
-        for (int i = curr_level_cnt - 1; i >= 0; --i)
+        for (int i = found->level - 1; i >= 0; --i)
         {
             update[i]->forward[i] = found->forward[i];
         }

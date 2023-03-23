@@ -2,8 +2,10 @@
 
 int main()
 {
-    std::priority_queue<int> test;
     std::map<int, int> test_map;
+    test_map.insert({1, 1});
+    test_map.insert({1, 2});
+    std::cout << "Test std::map " << test_map[1] << std::endl;
 
     {
         auto list = skip_list<int, int>();
