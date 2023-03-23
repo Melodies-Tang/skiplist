@@ -1,4 +1,4 @@
-#include "skiplist_map.hpp"
+#include "include\skiplist_map.hpp"
 
 int main()
 {
@@ -10,17 +10,26 @@ int main()
         list.insert(1, 1);
         list.insert(2, 1);
         list.insert(3, 1);
-        list.insert(4, 1);
-        std::cout << list.size() << std::endl;
+        list.insert(5, 1);
+        for (auto it = list.begin(); it != list.end(); it++)
+        {
+            std::cout << it->key << " " << it->value << std::endl;
+        }
         // skip_list<int, int>::iterator it = list.find(3);
-        auto it = list.find(3);
+        auto f = list.find(3);
         // it->key = 5;  // expression must be a modifiable lvalue
-        it->value = 3;
+        f->value = 3;
+        std::cout << "Change value of 3 to 3" << std::endl;
         std::cout << list[3] << std::endl;
         list.erase(3);
-        std::cout << list.size() << std::endl;
-        std::cout << list[3] << std::endl;
-        std::cout << list.size() << std::endl;
+        std::cout << "Erased 3" << std::endl;
+        for (auto it = list.begin(); it != list.end(); it++)
+        {
+            std::cout << it->key << " " << it->value << std::endl;
+        }
+        f = list.find(4);
+        if (f == list.end()) std::cout << "4 not found" << std::endl;
+        else std::cout << "Need 4 but " << f->key << " found" << std::endl;
     }
 
     {
@@ -58,21 +67,6 @@ int main()
     }
 
     std::cout << "==================================" << std::endl;
-
-    {
-        // 默认小于号
-        skip_list<int, int> list;
-        list.insert(1, 3);
-        list.insert(1, 3);
-        list.insert(4, 3);
-        list.insert(5, 3);
-        list.insert(1, 3);
-        list.insert(4, 3);
-        for (auto it = list.begin(); it != list.end(); it++)
-        {
-            std::cout << it->key << " " << it->value << std::endl;
-        }
-    }
 
     {
         // 可以添加 T && 实现move语义

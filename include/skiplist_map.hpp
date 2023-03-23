@@ -29,7 +29,7 @@ private:
         ~skip_list_node() { delete[] forward; }
     };
 
-    static const int MAX_LEVEL = 32;
+    const int MAX_LEVEL = 32;
     int curr_level_cnt = 0;
     int curr_elem_cnt = 0;
     skip_list_node *head;
@@ -40,16 +40,15 @@ private:
     /*
      * Called when new skip_list_node is to be inserted. Return the count of levels this skip_list_node should be inserted into.
      */
-    inline int random_level()
+    int random_level()
     {
-        int level_cnt = 0;
-        for (int i = 0; i < MAX_LEVEL; ++i)
-            if (std::rand() % 2)
-                ++level_cnt;
-        return level_cnt;
+        int level_cnt = 1;
+        constexpr double probability = 0.25;
+        while ((rand() & 0xFFFF) < 0xFFFF * probability) ++level_cnt;
+        return std::min(level_cnt, MAX_LEVEL);
     }
 
-    inline skip_list_node *find_update(const K &key, skip_list_node *update[MAX_LEVEL])
+    skip_list_node *find_update(const K &key, skip_list_node **update)
     {
         skip_list_node *curr = head;
         for (int i = curr_level_cnt - 1; i >= 0; --i)
@@ -84,7 +83,7 @@ public:
     };
 
     template<typename _Requires = typename std::enable_if<std::is_default_constructible<Comp>::value>>
-    skip_list() : head(new skip_list_node()), tail(new skip_list_node()), cmp()
+    skip_list() : head(new skip_list_node()), tail(nullptr), cmp()
     {
         srand((uint32_t)time(NULL));
         head->forward = new skip_list_node *[MAX_LEVEL];
@@ -92,7 +91,7 @@ public:
             head->forward[i] = tail;
     }
 
-    skip_list(const Comp& cmp) : head(new skip_list_node()), tail(new skip_list_node()), cmp(cmp)
+    skip_list(const Comp& cmp) : head(new skip_list_node()), tail(nullptr), cmp(cmp)
     {
         srand((uint32_t)time(NULL));
         head->forward = new skip_list_node *[MAX_LEVEL];
@@ -112,7 +111,7 @@ public:
         skip_list_node *update[MAX_LEVEL]; // record the predecessor of inserted levels
         skip_list_node *found = find_update(key, update);
 
-        if (found->key == key)
+        if (found != tail && found->key == key)
         {
             // key already exists, modify and return iterator pointing to it
             found->value = value;
@@ -140,7 +139,7 @@ public:
             update[i]->forward[i] = found->forward[i];
         }
         delete found;
-        while (curr_level_cnt > 0 && head->forward[curr_level_cnt - 1] != tail)
+        while (curr_level_cnt > 0 && head->forward[curr_level_cnt - 1] == tail)
             --curr_level_cnt;
         --curr_elem_cnt;
     }
@@ -186,16 +185,17 @@ public:
         for (int i = curr_level_cnt - 1; i >= 0; --i)
         {
             // In current level i, go forward until the next skip_list_node !<Comp> the target
-            while (curr != tail && cmp(curr->forward[i]->key, key))
+            while (curr->forward[i] != tail && cmp(curr->forward[i]->key, key))
             {
                 curr = curr->forward[i];
             }
         }
-        if (curr == tail)
-            return iterator(tail);
+        curr = curr->forward[0];
+        if (curr == tail || curr->key != key)
+            return end();
         else
         {
-            return iterator(curr->forward[0]);
+            return iterator(curr);
         }
     }
 };
